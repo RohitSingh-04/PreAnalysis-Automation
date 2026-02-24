@@ -1,9 +1,6 @@
 import pandas as pd
-import os
 
-detect_files = [file for file in os.listdir() if file.endswith(".xlsx")]
-
-def combined_files(detect_files: list = detect_files):
+def combined_files(detect_files):
     if len(detect_files):
         frames = []
 
@@ -20,5 +17,3 @@ def combined_files(detect_files: list = detect_files):
 
     else:
         print("no files found")
-
-combined_files()

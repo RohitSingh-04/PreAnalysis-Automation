@@ -1,0 +1,3 @@
+
+COUNTERPARTY = 0
+DUPER = 1
