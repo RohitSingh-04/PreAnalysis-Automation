@@ -13,6 +13,7 @@ if folder_path:
     if len(excel_files):
         try:
             main.start_app(excel_files)
+            messagebox.showinfo("complete", "successfully processed all files! you are good to exit")
         except ValueError:
             messagebox.showerror("invalid dataformat", "make sure you choose the correct data file")
         except:
