@@ -1,10 +1,7 @@
 import pandas as pd
 import numpy as np
-import openpyxl
 import html
 from datetime import datetime
-
-filename = "Alert2134135.xlsx"
 
 def top_counterparties_to_html(
     top_counterparties: pd.DataFrame,
@@ -112,8 +109,7 @@ def top_counterparties_to_html(
 </html>"""
 
 
-def detect_counterparty(filename):
-    df = pd.read_excel(filename)
+def detect_counterparty(df: pd.DataFrame, output_dir: str):
 
     df["Transaction Amount"] = pd.to_numeric(df["Transaction Amount"], errors="coerce")
 
@@ -134,5 +130,5 @@ def detect_counterparty(filename):
 
     top_counterparties = top_counterparties.groupby("Alert Information").head(top_n).reset_index(drop=True)
 
-    with open("counterparties.html", "w") as fh:
+    with open(output_dir, "w") as fh:
         fh.write(top_counterparties_to_html(top_counterparties))

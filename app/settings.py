@@ -1,3 +1,8 @@
-
 COUNTERPARTY = 0
 DUPER = 1
+
+CURRENCY_FORMAT = '"$"#,##0.00'
+
+TRANSACTION_AMOUNT = "Transaction Amount"
+
+OUTPUT_DIR = 'output'

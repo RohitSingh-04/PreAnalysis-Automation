@@ -79,8 +79,7 @@ def customer_osdd_to_html(customer_names, customer_addresses, title="Customer Se
 </html>"""
 
 
-def detect_customer(filename):
-    df = pd.read_excel(filename)
+def detect_customer(df:pd.DataFrame, output_dir:str):
     
     CUSTOMER = {0: "Beneficiary Name", 1: "Originator Name"}
     ADDRESS = {0: "Beneficiary Address", 1: 'Originator Address'}
@@ -98,5 +97,5 @@ def detect_customer(filename):
     customer_address_variants.update(df_debits[ADDRESS[1]].unique())
     
     html = customer_osdd_to_html(customer_variants, customer_address_variants)
-    with open("customer_osdd.html", "w") as fh:
+    with open(output_dir, "w") as fh:
         fh.write(html)

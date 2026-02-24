@@ -12,11 +12,12 @@ if folder_path:
     excel_files = [file for file in os.listdir(folder_path) if file.endswith(".xlsx")]
     if len(excel_files):
         try:
-            main.start_app(excel_files)
+            main.start_app(excel_files, folder_path)
             messagebox.showinfo("complete", "successfully processed all files! you are good to exit")
         except ValueError:
             messagebox.showerror("invalid dataformat", "make sure you choose the correct data file")
-        except:
+        except Exception as e:
+            print(e)
             messagebox.showerror("Unknown Error", "unwanted error occured")
     else:
         messagebox.showerror("No Excel Files", "This Error occcured because no excel files were identified on selected location")
