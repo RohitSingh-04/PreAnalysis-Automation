@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import html
 from datetime import datetime
+import urllib.parse
 
 def top_counterparties_to_html(
     top_counterparties: pd.DataFrame,
@@ -42,13 +43,24 @@ def top_counterparties_to_html(
 
         # Build rows
         rows_html = []
+        
         for _, r in g.iterrows():
+            if not pd.isna(r['Counterparty']):
+              urls = [html.escape('https://google.com/search?q=' + urllib.parse.quote_plus(str(r['Counterparty']))), 
+                      html.escape('https://google.com/search?q=%22' + urllib.parse.quote_plus(str(r['Counterparty'])) + '%22 AND (arrest OR corruption OR sentencing OR money laundering OR AML OR launder OR embezzle OR evad OR evad OR Crimes OR corrupt OR bribe OR theft OR extort OR drug OR traffic OR trafficking OR felony OR sanctions OR counterfeit OR terror)')]
+              
+              url_text = "Click Here"
+
+            else:
+              urls = ["", ""]
+              url_text = ""
+
             rows_html.append(
                 "<tr>\n"
                 f"<td>{html.escape(str(r['Counterparty']))}</td>\n"
                 f"<td class='num'>{html.escape(str(r['Total Amount (formatted)']))}</td>\n"
-                f"<td> <a href=\"{html.escape('https://google.com/search?q=' + str(r['Counterparty']))}\" target=\"_blank\">Click Here</a></td>\n"
-                f"<td> <a href=\"{html.escape('https://google.com/search?q=%22' + str(r['Counterparty']) + '%22 AND (arrest OR corruption OR sentencing OR money laundering OR AML OR launder OR embezzle OR evad OR evad OR Crimes OR corrupt OR bribe OR theft OR extort OR drug OR traffic OR trafficking OR felony OR sanctions OR counterfeit OR terror)')}\" target=\"_blank\">Click Here</a></td>\n"
+                f"<td> <a href=\"{urls[0]}\" target=\"_blank\">{url_text}</a></td>\n"
+                f"<td> <a href=\"{urls[1]}\" target=\"_blank\">{url_text}</a></td>\n"
                 "</tr>"
             )
             
@@ -119,7 +131,7 @@ def detect_counterparty(df: pd.DataFrame, output_dir: str):
         df["Originator Name"],
     )
 
-    top_n = 3
+    top_n = 4
 
     top_counterparties = (
         df.groupby(["Alert Information", "Counterparty"], dropna=False)["Transaction Amount"]

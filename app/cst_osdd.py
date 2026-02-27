@@ -1,6 +1,7 @@
 import html
 import pandas as pd
 from datetime import datetime
+import urllib.parse 
 
 def customer_osdd_to_html(customer_names, customer_addresses, title="Customer Searches", generated_at=None):
     if generated_at is None:
@@ -15,10 +16,10 @@ def customer_osdd_to_html(customer_names, customer_addresses, title="Customer Se
                 "<tr>\n"
                 f"<td>{customer_name}</td>\n"
                 f"<td class='num'>{customer_address}</td>\n"
-                f"<td> <a href=\"{html.escape('https://google.com/search?q=' + str(customer_name))}\" target=\"_blank\">Click Here</a></td>\n"
-                f"<td> <a href=\"{html.escape('https://google.com/search?q=' + str(customer_address))}\" target=\"_blank\">Click Here</a></td>\n"
-                f"<td> <a href=\"{html.escape('https://google.com/search?q=' + str(customer_name) + '%2B' + str(customer_address))}\" target=\"_blank\">Click Here</a></td>\n"
-                f"<td> <a href=\"{html.escape('https://google.com/search?q=%22' + str(customer_name) + '%22 AND (arrest OR corruption OR sentencing OR money laundering OR AML OR launder OR embezzle OR evad OR evad OR Crimes OR corrupt OR bribe OR theft OR extort OR drug OR traffic OR trafficking OR felony OR sanctions OR counterfeit OR terror)')}\" target=\"_blank\">Click Here</a></td>\n"
+                f"<td> <a href=\"{html.escape('https://google.com/search?q=' + urllib.parse.quote_plus(str(customer_name)))}\" target=\"_blank\">Click Here</a></td>\n"
+                f"<td> <a href=\"{html.escape('https://google.com/search?q=' + urllib.parse.quote_plus(str(customer_address)))}\" target=\"_blank\">Click Here</a></td>\n"
+                f"<td> <a href=\"{html.escape('https://google.com/search?q=' + urllib.parse.quote_plus(str(customer_name)) + '%2B' + urllib.parse.quote_plus(str(customer_address)))}\" target=\"_blank\">Click Here</a></td>\n"
+                f"<td> <a href=\"{html.escape('https://google.com/search?q=%22' + urllib.parse.quote_plus(str(customer_name)) + '%22 AND (arrest OR corruption OR sentencing OR money laundering OR AML OR launder OR embezzle OR evad OR evad OR Crimes OR corrupt OR bribe OR theft OR extort OR drug OR traffic OR trafficking OR felony OR sanctions OR counterfeit OR terror)')}\" target=\"_blank\">Click Here</a></td>\n"
                 "</tr>"
             )
             
