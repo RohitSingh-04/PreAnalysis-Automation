@@ -1,6 +1,7 @@
-from app import combiner, deduper, cntr, cst_osdd, settings, excel_writer
+from app import combiner, deduper, cntr, cst_osdd, settings, excel_writer, cntr_osdd_pdfs, url_generator
 import pandas as pd
 from pathlib import Path
+from sanitize_filename import sanitize
 
 def start_app(filenames:list, input_dir:str):
 
@@ -21,7 +22,7 @@ def start_app(filenames:list, input_dir:str):
 
         uniques = deduper.deduper(combined_data, mode=settings.DUPER)
 
-        cntr.detect_counterparty(counterparty_informations, output_path / 'counterparty_OSDD.html')
+        counterparties = cntr.detect_counterparty(counterparty_informations, output_path / 'counterparty_OSDD.html')
         cst_osdd.detect_customer(uniques, output_path / 'customer_OSDD.html')
 
         datas = (combined_data, counterparty_informations, uniques)
@@ -29,6 +30,11 @@ def start_app(filenames:list, input_dir:str):
 
         #write into one workbook now
         excel_writer.write_excel(output_path / 'Combined Alerted Transasctions.xlsx', datas, sheetnames)
+
+        #perfomr osdd and save
+        for counterparty in counterparties:
+            cntr_osdd_pdfs.save_google_search_to_pdf(url_generator.google_search_url(counterparty), output_path / f'{sanitize(counterparty)}.pdf')
+            cntr_osdd_pdfs.save_google_search_to_pdf(url_generator.google_string_search_url(counterparty), output_path / f'{sanitize(counterparty)}_Negative News.pdf')
 
     else:
         print("not valid")

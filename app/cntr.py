@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import html
 from datetime import datetime
-import urllib.parse
+from app import url_generator
 
 def top_counterparties_to_html(
     top_counterparties: pd.DataFrame,
@@ -46,8 +46,8 @@ def top_counterparties_to_html(
         
         for _, r in g.iterrows():
             if not pd.isna(r['Counterparty']):
-              urls = [html.escape('https://google.com/search?q=' + urllib.parse.quote_plus(str(r['Counterparty']))), 
-                      html.escape('https://google.com/search?q=%22' + urllib.parse.quote_plus(str(r['Counterparty'])) + '%22 AND (arrest OR corruption OR sentencing OR money laundering OR AML OR launder OR embezzle OR evad OR evad OR Crimes OR corrupt OR bribe OR theft OR extort OR drug OR traffic OR trafficking OR felony OR sanctions OR counterfeit OR terror)')]
+              urls = [html.escape(url_generator.google_search_url(str(r['Counterparty']))), 
+                      html.escape(url_generator.google_string_search_url(str(r['Counterparty'])))]
               
               url_text = "Click Here"
 
@@ -144,3 +144,7 @@ def detect_counterparty(df: pd.DataFrame, output_dir: str):
 
     with open(output_dir, "w") as fh:
         fh.write(top_counterparties_to_html(top_counterparties))
+
+    cntrsptys = top_counterparties["Counterparty"].dropna()
+
+    return cntrsptys
