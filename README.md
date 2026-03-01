@@ -91,4 +91,34 @@ python start.py
 Executable builds are generated using PyInstaller.  
 Build and distribution artifacts are stored in the `build/` and `dist/` directories.
 
+# .Spec file mandatory changes
+
+1. while generating the dist make sure to include hidden imports as well specially handle selenium
+
+    ```
+    import importlib.metadata
+    import pkg_resources
+
+    all_deps = [dist.metadata['Name'] for dist in importlib.metadata.distributions()]
+
+    all_deps.extend([
+        'selenium.webdriver', 'selenium.webdriver.chrome.webdriver', 'selenium.webdriver.chrome.service', 'webdriver_manager', 'webdriver_manager.chrome'
+    ])
+    ```
+    - at Analysis() update the hiddenimports and set to all_deps
+    ```
+    a = Analysis(
+        ['start.py'],
+        pathex=[],
+        binaries=[],
+        datas=[],
+        hiddenimports=all_deps,
+        hookspath=[],
+        hooksconfig={},
+        runtime_hooks=[],
+        excludes=[],
+        noarchive=False,
+        optimize=0,
+    )
+    ```
 ---
