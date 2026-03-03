@@ -19,11 +19,8 @@ This project provides a user interface to select a folder and process `.xlsx` Ex
 ```
 PreAnalysis-Automation/
 ├── app/                    # Main automation logic
-├── build/AlphaV1.9/        # Build output (PyInstaller)
-├── dist/                   # Distribution files
 ├── sample_data/            # Example Excel files for testing
 ├── start.py                # Entry point (GUI)
-├── AlphaV1.9.spec          # PyInstaller spec file
 ├── requirements.txt        # Python dependencies
 └── .gitignore              # Ignored files
 ```
@@ -88,10 +85,9 @@ python start.py
 
 ## 🗂 Distribution
 
-Executable builds are generated using PyInstaller.  
-Build and distribution artifacts are stored in the `build/` and `dist/` directories.
+Executable builds can be generated using PyInstaller or Nuitka.  
 
-# .Spec file mandatory changes
+# Spec file mandatory changes for pyinstaller
 
 1. while generating the dist make sure to include hidden imports as well specially handle selenium
 
@@ -121,4 +117,10 @@ Build and distribution artifacts are stored in the `build/` and `dist/` director
         optimize=0,
     )
     ```
+
+# if using nuitka use the below command to build the exe
+
+```
+python -m nuitka --standalone --onefile --enable-plugin=tk-inter --include-package=selenium --include-package=webdriver_manager --windows-disable-console --windows-icon-from-ico=favicon/favicon_ico.ico --windows-company-name="Rohiyaa" --windows-product-version="2.0.1" --assume-yes-for-downloads -o Alpha.exe start.py 
+```
 ---
