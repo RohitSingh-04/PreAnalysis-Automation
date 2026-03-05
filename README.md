@@ -121,6 +121,6 @@ Executable builds can be generated using PyInstaller or Nuitka.
 # if using nuitka use the below command to build the exe
 
 ```
-python -m nuitka --standalone --onefile --enable-plugin=tk-inter --include-package=selenium --include-package=webdriver_manager --windows-icon-from-ico=favicon/favicon_ico.ico --windows-company-name="Rohiyaa" --windows-console-mode=disable --windows-product-version="2.0.1" --assume-yes-for-downloads -o Alpha.exe start.py 
+python -m nuitka --standalone --onefile --enable-plugin=tk-inter --include-package=selenium --include-package=webdriver_manager --include-data-dir=favicon=favicon --windows-icon-from-ico=favicon/favicon_ico.ico --windows-company-name="Rohiyaa" --windows-console-mode=disable --windows-product-version="2.0.1" --assume-yes-for-downloads -o Alpha.exe start.py
 ```
 ---

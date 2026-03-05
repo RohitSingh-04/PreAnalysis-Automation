@@ -5,10 +5,24 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 from tkinter import messagebox, TclError
+from app.settings import PRINT_OPTIONS, NEGATIVE_URL
+
+def save_pdf(driver, output_dir):
+
+    # wait for page load
+    time.sleep(2)
+        
+    # print page
+    result = driver.execute_cdp_cmd("Page.printToPDF", PRINT_OPTIONS)
+    
+    # save pdf
+    with open(output_dir, "wb") as f:
+        f.write(base64.b64decode(result['data']))
 
 
-def save_google_search_to_pdf(url, output_dir):
+def save_google_search_to_pdf(url, output_dir, mode=False):
 
     chrome_options = Options()
 
@@ -32,24 +46,17 @@ def save_google_search_to_pdf(url, output_dir):
             elif user_input:
                 break
 
-        # wait for page load
-        time.sleep(2)
+        save_pdf(driver, output_dir)
         
-        print_options = {
-            'landscape': False,
-            'displayHeaderFooter': False,
-            'printBackground': True,
-            'preferCSSPageSize': True
-        }
-        
-        # print data
-        result = driver.execute_cdp_cmd("Page.printToPDF", print_options)
-        
-        # save file
-        with open(output_dir, "wb") as f:
-            f.write(base64.b64decode(result['data']))
-            
-        print("Successfully saved PDF.")
+        print("Successfully saved PDF!")
+
+        #take page 2 if avaliable and is negative search
+        if mode == NEGATIVE_URL:
+            elements = driver.find_elements(By.XPATH, '//*[@aria-label="Page 2"]')
+
+            if len(elements) > 0:
+                elements[0].click()
+                save_pdf(driver, str(output_dir)[:-4]+' 2.pdf')
 
     except Exception as e:
         print(f"An error occurred: {e}")

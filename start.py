@@ -9,6 +9,16 @@ import threading
 base_path = os.path.dirname(sys.executable)
 log_path = os.path.join(base_path, "Logs.txt")
 
+# This finds the correct folder whether you are running .py or .exe
+if getattr(sys, 'frozen', False):
+    # exe
+    detected_bundle_dir = os.path.dirname(sys.executable)
+else:
+    # .py
+    detected_bundle_dir = os.path.dirname(os.path.abspath(__file__))
+
+icon_path = os.path.join(detected_bundle_dir, "favicon", "favicon_ico.ico")
+
 def ask_dir(selected_dir: StringVar):
     selected_dir.set(filedialog.askdirectory(title="select a folder"))
 
@@ -54,7 +64,7 @@ def start_automation_thread(selected_dir, action_btn, status_var):
 root = Tk()
 root.title("AML Pre-Analysis Automater")
 root.geometry("400x180")
-root.iconbitmap('favicon/favicon_ico.ico')
+root.iconbitmap(icon_path)
 
 selected_dir = StringVar(value="No Folder Selected")
 status_text = StringVar(value="Ready")

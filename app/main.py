@@ -34,7 +34,7 @@ def start_app(filenames:list, input_dir:str):
         #perfomr osdd and save
         for counterparty in counterparties:
             cntr_osdd_pdfs.save_google_search_to_pdf(url_generator.google_search_url(counterparty), output_path / f'{sanitize(counterparty)}.pdf')
-            cntr_osdd_pdfs.save_google_search_to_pdf(url_generator.google_string_search_url(counterparty), output_path / f'{sanitize(counterparty)}_Negative News.pdf')
+            cntr_osdd_pdfs.save_google_search_to_pdf(url_generator.google_string_search_url(counterparty), output_path / f'{sanitize(counterparty)}_Negative News.pdf', mode = settings.NEGATIVE_URL)
 
     else:
         print("not valid")
