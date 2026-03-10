@@ -1,27 +1,27 @@
 import html
 import pandas as pd
+import itertools
 from datetime import datetime
 from app import url_generator
 
-def customer_osdd_to_html(customer_names, customer_addresses, title="Customer Searches", generated_at=None):
+def customer_osdd_to_html(customer_data: pd.DataFrame, title="Customer Searches", generated_at=None):
     if generated_at is None:
         generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     sections = []
     rows_html = []
     
-    for customer_name in customer_names:
-        for customer_address in customer_addresses:
-            rows_html.append(
-                "<tr>\n"
-                f"<td>{customer_name}</td>\n"
-                f"<td class='num'>{customer_address}</td>\n"
-                f"<td> <a href=\"{html.escape(url_generator.google_search_url(str(customer_name)))}\" target=\"_blank\">Click Here</a></td>\n"
-                f"<td> <a href=\"{html.escape(url_generator.google_search_url(str(customer_address)))}\" target=\"_blank\">Click Here</a></td>\n"
-                f"<td> <a href=\"{html.escape(url_generator.google_name_address_url(str(customer_name),str(customer_address)))}\" target=\"_blank\">Click Here</a></td>\n"
-                f"<td> <a href=\"{html.escape(url_generator.google_string_search_url(str(customer_name)))}\" target=\"_blank\">Click Here</a></td>\n"
-                "</tr>"
-            )
+    for index, customer in customer_data.iterrows():
+          rows_html.append(
+              "<tr>\n"
+              f"<td>{customer['Name']}</td>\n"
+              f"<td class='num'>{customer['Address']}</td>\n"
+              f"<td> <a href=\"{html.escape(url_generator.google_search_url(str(customer['Name'])))}\" target=\"_blank\">Click Here</a></td>\n"
+              f"<td> <a href=\"{html.escape(url_generator.google_search_url(str(customer['Address'])))}\" target=\"_blank\">Click Here</a></td>\n"
+              f"<td> <a href=\"{html.escape(url_generator.google_name_address_url(str(customer['Name']),str(customer['Address'])))}\" target=\"_blank\">Click Here</a></td>\n"
+              f"<td> <a href=\"{html.escape(url_generator.google_string_search_url(str(customer['Name'])))}\" target=\"_blank\">Click Here</a></td>\n"
+              "</tr>"
+          )
             
     rows_html = "\n".join(rows_html)
     
@@ -80,23 +80,31 @@ def customer_osdd_to_html(customer_names, customer_addresses, title="Customer Se
 </html>"""
 
 
-def detect_customer(df:pd.DataFrame, output_dir:str):
+def detect_customer(df:pd.DataFrame, output_dir:str, confirmationBox, root):
+  CUSTOMER = {0: "Beneficiary Name", 1: "Originator Name"}
+  ADDRESS = {0: "Beneficiary Address", 1: 'Originator Address'}
+
+  customer_variants = set()
+  customer_address_variants = set()
+
+  df_credits = df[df['Dr Cr'] == "CR"]
+  df_debits = df[df['Dr Cr'] == "DR"]
+
+  customer_variants.update(df_credits[CUSTOMER[0]].unique())
+  customer_variants.update(df_debits[CUSTOMER[1]].unique())
+
+  customer_address_variants.update(df_credits[ADDRESS[0]].unique())
+  customer_address_variants.update(df_debits[ADDRESS[1]].unique())
+  
+  data = itertools.product(customer_variants, customer_address_variants)
+  data_df = pd.DataFrame(data, columns=["Name", "Address"])
+
+  box = confirmationBox(root, data_df)
     
-    CUSTOMER = {0: "Beneficiary Name", 1: "Originator Name"}
-    ADDRESS = {0: "Beneficiary Address", 1: 'Originator Address'}
+  if box.confirmed:
+    data_df = box.result_df
+
+  html = customer_osdd_to_html(data_df)
+  with open(output_dir, "w") as fh:
+    fh.write(html)
     
-    customer_variants = set()
-    customer_address_variants = set()
-    
-    df_credits = df[df['Dr Cr'] == "CR"]
-    df_debits = df[df['Dr Cr'] == "DR"]
-    
-    customer_variants.update(df_credits[CUSTOMER[0]].unique())
-    customer_variants.update(df_debits[CUSTOMER[1]].unique())
-    
-    customer_address_variants.update(df_credits[ADDRESS[0]].unique())
-    customer_address_variants.update(df_debits[ADDRESS[1]].unique())
-    
-    html = customer_osdd_to_html(customer_variants, customer_address_variants)
-    with open(output_dir, "w") as fh:
-        fh.write(html)

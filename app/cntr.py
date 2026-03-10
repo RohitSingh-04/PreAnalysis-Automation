@@ -121,7 +121,7 @@ def top_counterparties_to_html(
 </html>"""
 
 
-def detect_counterparty(df: pd.DataFrame, output_dir: str):
+def detect_counterparty(df: pd.DataFrame, output_dir: str, confirmationBox, root):
 
     df["Transaction Amount"] = pd.to_numeric(df["Transaction Amount"], errors="coerce")
 
@@ -141,6 +141,13 @@ def detect_counterparty(df: pd.DataFrame, output_dir: str):
     )
 
     top_counterparties = top_counterparties.groupby("Alert Information").head(top_n).reset_index(drop=True)
+
+    #confirm the user here
+    editor = confirmationBox(root, top_counterparties)
+    
+    # Update our dataframe with the confirmed value
+    if editor.confirmed:
+        top_counterparties = editor.result_df
 
     with open(output_dir, "w") as fh:
         fh.write(top_counterparties_to_html(top_counterparties))

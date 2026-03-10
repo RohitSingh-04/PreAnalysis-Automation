@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 from sanitize_filename import sanitize
 
-def start_app(filenames:list, input_dir:str):
+def start_app(filenames:list, input_dir:str, CounterpartyConfirmationBox, CustomerConfirmationBox, root):
 
     input_dir = Path(input_dir)
 
@@ -22,8 +22,8 @@ def start_app(filenames:list, input_dir:str):
 
         uniques = deduper.deduper(combined_data, mode=settings.DUPER)
 
-        counterparties = cntr.detect_counterparty(counterparty_informations, output_path / 'counterparty_OSDD.html')
-        cst_osdd.detect_customer(uniques, output_path / 'customer_OSDD.html')
+        counterparties = cntr.detect_counterparty(counterparty_informations, output_path / 'counterparty_OSDD.html', CounterpartyConfirmationBox, root)
+        cst_osdd.detect_customer(uniques, output_path / 'customer_OSDD.html', CustomerConfirmationBox, root)
 
         datas = (combined_data, counterparty_informations, uniques)
         sheetnames = ("Raw", "Counterparty Informations", "De Dupe")
